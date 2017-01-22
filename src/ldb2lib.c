@@ -31,10 +31,21 @@ static int db2_allocEnv (lua_State *L) {
   }
 }
 
+static int db2_freeEnv (lua_Status *L) {
+  SQLRETURN res = SQLFreeEnv(lua_tointeger(L, 1));
+  
+  if (res != SQL_SUCCESS) {
+    return luaL_execresult(L, SQL_ERROR);
+  } else {
+    return 1;
+  }
+}
+
 /* }====================================================== */
 
 static const luaL_Reg db2lib[] = {
-  {"allocEnv",   db2_allocEnv},
+  {"allocEnv",  db2_allocEnv},
+  {"freeEnv",   db2_freeEnv},
   {NULL, NULL}
 };
 
