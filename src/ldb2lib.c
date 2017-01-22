@@ -53,12 +53,23 @@ static int db2_allocConnect (lua_State *L) {
   }
 }
 
+static int db2_freeConnect (lua_State *L) {
+  SQLRETURN res = SQLFreeConnect(lua_tointeger(L, 1));
+
+  if (res != SQL_SUCCESS) {
+    return luaL_execresult(L, SQL_ERROR);
+  } else {
+    return 1;
+  }
+}
+
 /* }====================================================== */
 
 static const luaL_Reg db2lib[] = {
   {"allocEnv",     db2_allocEnv},
   {"freeEnv",      db2_freeEnv},
   {"allocConnect", db2_allocConnect},
+  {"freeConnect",  db2_freeConnect},
   {NULL, NULL}
 };
 
