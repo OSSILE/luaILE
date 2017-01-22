@@ -3,9 +3,17 @@ do
   local env = db2.allocEnv()
   print(env)
   
-  local hdl = db2.allocConnect(env);
+  local hdl = db2.allocConnection(env)
   print(hdl);
   
-  local hdleres = db2.freeConnect(hdl);
+  db2.Connect(hdl, "*LOCAL")
+  
+  local stmt = db2.allocStatement(hdl)
+  print(stmt)
+  
+  db2.Disconnect(hdl);
+  
+  local stmt = db2.freeStatement(stmt)
+  local hdleres = db2.freeConnection(hdl)
   local envres = db2.freeEnv(env)
 end

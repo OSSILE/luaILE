@@ -20,7 +20,7 @@
 #include "lualib.h"
 #include <sqlcli.h>
 
-static int db2_allocEnv (lua_State *L) {
+static int db2_allocEnv(lua_State *L) {
   SQLHENV ptr = 0;
 
   if (SQLAllocEnv(&ptr) == SQL_ERROR)
@@ -31,17 +31,14 @@ static int db2_allocEnv (lua_State *L) {
   }
 }
 
-static int db2_freeEnv (lua_State *L) {
+static int db2_freeEnv(lua_State *L) {
   SQLRETURN res = SQLFreeEnv(lua_tointeger(L, 1));
 
-  if (res != SQL_SUCCESS) {
-    return luaL_execresult(L, SQL_ERROR);
-  } else {
-    return 1;
-  }
+  lua_pushnumber(L, res);
+  return res;
 }
 
-static int db2_allocConnect (lua_State *L) {
+static int db2_allocConnect(lua_State *L) {
   SQLHENV env = lua_tointeger(L, 1);
   SQLHDBC hdl = 0;
 
@@ -53,23 +50,63 @@ static int db2_allocConnect (lua_State *L) {
   }
 }
 
-static int db2_freeConnect (lua_State *L) {
+static int db2_freeConnect(lua_State *L) {
   SQLRETURN res = SQLFreeConnect(lua_tointeger(L, 1));
 
-  if (res != SQL_SUCCESS) {
+  lua_pushnumber(L, res);
+  return res;
+}
+
+static int db2_Connect(lua_State *L) {
+  SQLHDBC hdl = lua_tointeger(L, 1);
+  SQLCHAR *database = (char*) luaL_optstring(L, 2, NULL);
+
+  if (SQLConnect(hdl, database, SQL_NTS, NULL, SQL_NTS, NULL, SQL_NTS) != SQL_SUCCESS) {
+    lua_pushnumber(L, 0);
     return luaL_execresult(L, SQL_ERROR);
   } else {
+    lua_pushnumber(L, 1);
     return 1;
   }
+}
+
+static int db2_Disconnect(lua_State *L) {
+  SQLRETURN res = SQLDisconnect(lua_tointeger(L, 1));
+
+  lua_pushnumber(L, res);
+  return res;
+}
+
+static int db2_allocStatement(lua_State *L) {
+  SQLHDBC hdl = lua_tointeger(L, 1);
+  SQLHSTMT stmt = 0;
+
+  if (SQLAllocStmt(hdl, &stmt) != SQL_SUCCESS)
+    return luaL_execresult(L, SQL_ERROR);
+  else {
+    lua_pushnumber(L, stmt);  /* true if there is a shell */
+    return 1;
+  }
+}
+
+static int db2_freeStatement(lua_State *L) {
+  SQLRETURN res = SQLFreeStmt(lua_tointeger(L, 1), SQL_CLOSE);
+
+  lua_pushnumber(L, res);
+  return res;
 }
 
 /* }====================================================== */
 
 static const luaL_Reg db2lib[] = {
-  {"allocEnv",     db2_allocEnv},
-  {"freeEnv",      db2_freeEnv},
-  {"allocConnect", db2_allocConnect},
-  {"freeConnect",  db2_freeConnect},
+  {"allocEnv",        db2_allocEnv},
+  {"freeEnv",         db2_freeEnv},
+  {"allocConnection", db2_allocConnect},
+  {"freeConnection",  db2_freeConnect},
+  {"Connect",         db2_Connect},
+  {"Disconnect",      db2_Disconnect},
+  {"allocStatement",  db2_allocStatement},
+  {"freeStatement",   db2_freeStatement},
   {NULL, NULL}
 };
 
