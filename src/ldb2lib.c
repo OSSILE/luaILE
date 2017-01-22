@@ -21,18 +21,27 @@
 #include <sqlcli.h>
 
 static int db2_allocEnv(lua_State *L) {
-  SQLHENV ptr = 0;
+  SQLHENV env = 0;
+  int sqltrue = SQL_TRUE;
 
-  if (SQLAllocEnv(&ptr) == SQL_ERROR)
+  if (SQLAllocEnv(&env) == SQL_ERROR) {
+    lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
-  else {
-    lua_pushnumber(L, ptr);  /* true if there is a shell */
+  } else {
+    SQLSetEnvAttr(env, SQL_ATTR_SERVER_MODE, &sqltrue, 1);
+
+    lua_pushnumber(L, env);  /* true if there is a shell */
     return 1;
   }
 }
 
 static int db2_freeEnv(lua_State *L) {
-  SQLRETURN res = SQLFreeEnv(lua_tointeger(L, 1));
+  SQLHENV env = lua_tointeger(L, 1);
+
+  int sqlfalse = SQL_FALSE;
+  SQLSetEnvAttr(env, SQL_ATTR_SERVER_MODE, &sqlfalse, 1);
+
+  SQLRETURN res = SQLFreeEnv(env);
 
   lua_pushnumber(L, res);
   return res;
@@ -42,9 +51,15 @@ static int db2_allocConnect(lua_State *L) {
   SQLHENV env = lua_tointeger(L, 1);
   SQLHDBC hdl = 0;
 
-  if (SQLAllocConnect(env, &hdl) != SQL_SUCCESS)
+  int sqltrue = SQL_AUTOCOMMIT_ON;
+
+  if (SQLAllocConnect(env, &hdl) != SQL_SUCCESS) {
+    lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
-  else {
+  } else {
+    // We want autocommit on for the time being
+    SQLSetConnectAttr(hdl, SQL_ATTR_AUTOCOMMIT, &sqltrue, SQL_NTS);
+
     lua_pushnumber(L, hdl);  /* true if there is a shell */
     return 1;
   }
@@ -61,8 +76,10 @@ static int db2_Connect(lua_State *L) {
   SQLHDBC hdl = lua_tointeger(L, 1);
   SQLCHAR *database = (char*) luaL_optstring(L, 2, NULL);
 
-  if (SQLConnect(hdl, database, SQL_NTS, NULL, SQL_NTS, NULL, SQL_NTS) != SQL_SUCCESS) {
-    lua_pushnumber(L, 0);
+  SQLRETURN res = SQLConnect(hdl, database, SQL_NTS, NULL, SQL_NTS, NULL, SQL_NTS);
+
+  if (res != SQL_SUCCESS) {
+    lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
     lua_pushnumber(L, 1);
@@ -81,9 +98,10 @@ static int db2_allocStatement(lua_State *L) {
   SQLHDBC hdl = lua_tointeger(L, 1);
   SQLHSTMT stmt = 0;
 
-  if (SQLAllocStmt(hdl, &stmt) != SQL_SUCCESS)
+  if (SQLAllocStmt(hdl, &stmt) != SQL_SUCCESS) {
+    lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
-  else {
+  } else {
     lua_pushnumber(L, stmt);  /* true if there is a shell */
     return 1;
   }
@@ -94,6 +112,39 @@ static int db2_freeStatement(lua_State *L) {
 
   lua_pushnumber(L, res);
   return res;
+}
+
+static int db2_executeDirect(lua_State *L) {
+  SQLHSTMT stmt = lua_tointeger(L, 1);
+  SQLCHAR *statement = (char*) luaL_optstring(L, 2, NULL);
+
+  SQLRETURN res = SQLExecDirect(stmt, statement, SQL_NTS);
+  lua_pushnumber(L, res);
+  return 1;
+}
+
+static int db2_printError(lua_State *L) {
+
+  SQLHENV env = lua_tointeger(L, 1);
+  SQLHDBC hdl = lua_tointeger(L, 2);
+  SQLHSTMT stmt = lua_tointeger(L, 3);
+
+  SQLCHAR     buffer[SQL_MAX_MESSAGE_LENGTH + 1];
+  SQLCHAR     sqlstate[SQL_SQLSTATE_SIZE + 1];
+  SQLINTEGER  sqlcode;
+  SQLSMALLINT length;
+
+
+  while ( SQLError(env, hdl, stmt, sqlstate, &sqlcode, buffer,
+                   SQL_MAX_MESSAGE_LENGTH + 1, &length) == SQL_SUCCESS )
+  {
+    printf("\n **** ERROR *****\n");
+    printf("         SQLSTATE: %s\n", sqlstate);
+    printf("Native Error Code: %ld\n", sqlcode);
+    printf("%s \n", buffer);
+  };
+
+  return (SQL_ERROR);
 }
 
 /* }====================================================== */
@@ -107,6 +158,9 @@ static const luaL_Reg db2lib[] = {
   {"Disconnect",      db2_Disconnect},
   {"allocStatement",  db2_allocStatement},
   {"freeStatement",   db2_freeStatement},
+
+  {"executeStatement", db2_executeDirect},
+  {"printError", db2_printError},
   {NULL, NULL}
 };
 
