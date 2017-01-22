@@ -22,7 +22,7 @@
 
 static int db2_allocEnv (lua_State *L) {
   SQLHENV ptr = 0;
-  
+
   if (SQLAllocEnv(&ptr) == SQL_ERROR)
     return luaL_execresult(L, SQL_ERROR);
   else {
@@ -31,9 +31,9 @@ static int db2_allocEnv (lua_State *L) {
   }
 }
 
-static int db2_freeEnv (lua_Status *L) {
+static int db2_freeEnv (lua_State *L) {
   SQLRETURN res = SQLFreeEnv(lua_tointeger(L, 1));
-  
+
   if (res != SQL_SUCCESS) {
     return luaL_execresult(L, SQL_ERROR);
   } else {
@@ -41,11 +41,24 @@ static int db2_freeEnv (lua_Status *L) {
   }
 }
 
+static int db2_allocConnect (lua_State *L) {
+  SQLHENV env = lua_tointeger(L, 1);
+  SQLHDBC hdl = 0;
+
+  if (SQLAllocConnect(env, &hdl) != SQL_SUCCESS)
+    return luaL_execresult(L, SQL_ERROR);
+  else {
+    lua_pushnumber(L, hdl);  /* true if there is a shell */
+    return 1;
+  }
+}
+
 /* }====================================================== */
 
 static const luaL_Reg db2lib[] = {
-  {"allocEnv",  db2_allocEnv},
-  {"freeEnv",   db2_freeEnv},
+  {"allocEnv",     db2_allocEnv},
+  {"freeEnv",      db2_freeEnv},
+  {"allocConnect", db2_allocConnect},
   {NULL, NULL}
 };
 
