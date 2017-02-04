@@ -16,9 +16,9 @@ do
   
   db2.printError(env, hdl, stmt)
   
-  local stmt = db2.freeStatement(stmt)
+  local stmt = db2.closeStatement(stmt)
   
-  db2.Disconnect(hdl);
+  db2.Disconnect(hdl)
   
   local hdleres = db2.freeConnection(hdl)
   local envres = db2.freeEnv(env)

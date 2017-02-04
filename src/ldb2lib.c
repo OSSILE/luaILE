@@ -107,11 +107,14 @@ static int db2_allocStatement(lua_State *L) {
   }
 }
 
-static int db2_freeStatement(lua_State *L) {
-  SQLRETURN res = SQLFreeStmt(lua_tointeger(L, 1), SQL_CLOSE);
+static int db2_closeStatement(lua_State *L) {
+  SQLHSTMT stmt = lua_tointeger(L, 1);
+  
+  SQLCloseCursor(stmt);
+  SQLFreeStmt(stmt, SQL_CLOSE);
 
-  lua_pushnumber(L, res);
-  return res;
+  lua_pushnumber(L, 1);
+  return 1;
 }
 
 static int db2_executeDirect(lua_State *L) {
@@ -120,6 +123,31 @@ static int db2_executeDirect(lua_State *L) {
 
   SQLRETURN res = SQLExecDirect(stmt, statement, SQL_NTS);
   lua_pushnumber(L, res);
+  return 1;
+}
+
+static int db2_fetch(lua_State *L) {
+  SQLHSTMT stmt = lua_tointeger(L, 1);
+  
+  SQLRETURN res = SQLFetch(stmt);
+  lua_pushnumber(L, res);
+  return 1;
+}
+
+static int db2_getColumn(lua_State *L) {
+  SQLINTEGER rlength;
+  
+  SQLHSTMT stmt = lua_tointeger(L, 1);
+  SQLSMALLINT col = lua_tointeger(L, 2);
+  SQLINTEGER len = lua_tointeger(L, 3);
+  rlength = len-4;
+  
+  SQLCHAR * fieldRet;
+  
+  SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
+  
+  lua_pushstring(L, fieldRet);
+  
   return 1;
 }
 
@@ -157,10 +185,12 @@ static const luaL_Reg db2lib[] = {
   {"Connect",         db2_Connect},
   {"Disconnect",      db2_Disconnect},
   {"allocStatement",  db2_allocStatement},
-  {"freeStatement",   db2_freeStatement},
+  {"closeStatement",  db2_closeStatement},
 
   {"executeStatement", db2_executeDirect},
-  {"printError", db2_printError},
+  {"fetch",            db2_fetch},
+  {"getColumn",        db2_getColumn},
+  {"printError",       db2_printError},
   {NULL, NULL}
 };
 
