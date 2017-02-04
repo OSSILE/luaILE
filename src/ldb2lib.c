@@ -27,9 +27,8 @@ static int db2_allocEnv(lua_State *L) {
   if (SQLAllocEnv(&env) == SQL_ERROR) {
     lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
+    
   } else {
-    SQLSetEnvAttr(env, SQL_ATTR_SERVER_MODE, &sqltrue, 1);
-
     lua_pushnumber(L, env);  /* true if there is a shell */
     return 1;
   }
@@ -37,9 +36,6 @@ static int db2_allocEnv(lua_State *L) {
 
 static int db2_freeEnv(lua_State *L) {
   SQLHENV env = lua_tointeger(L, 1);
-
-  int sqlfalse = SQL_FALSE;
-  SQLSetEnvAttr(env, SQL_ATTR_SERVER_MODE, &sqlfalse, 1);
 
   SQLRETURN res = SQLFreeEnv(env);
 
@@ -57,8 +53,6 @@ static int db2_allocConnect(lua_State *L) {
     lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
-    // We want autocommit on for the time being
-    SQLSetConnectAttr(hdl, SQL_ATTR_AUTOCOMMIT, &sqltrue, SQL_NTS);
 
     lua_pushnumber(L, hdl);  /* true if there is a shell */
     return 1;
@@ -76,12 +70,18 @@ static int db2_Connect(lua_State *L) {
   SQLHDBC hdl = lua_tointeger(L, 1);
   SQLCHAR *database = (char*) luaL_optstring(L, 2, NULL);
 
-  SQLRETURN res = SQLConnect(hdl, database, SQL_NTS, NULL, SQL_NTS, NULL, SQL_NTS);
+  SQLRETURN res = SQLConnect(hdl, database, SQL_NTS, 0, SQL_NTS, 0, SQL_NTS);
 
   if (res != SQL_SUCCESS) {
     lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
+    SQLINTEGER sqltrue = SQL_TRUE;
+    SQLINTEGER nocmt = SQL_TXN_NO_COMMIT;
+    
+    SQLSetConnectAttr(hdl, SQL_ATTR_DBC_SYS_NAMING, &sqltrue, 0);
+    SQLSetConnectAttr(hdl, SQL_ATTR_COMMIT, &nocmt, 0);
+    
     lua_pushnumber(L, 1);
     return 1;
   }
@@ -102,7 +102,7 @@ static int db2_allocStatement(lua_State *L) {
     lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
-    lua_pushnumber(L, stmt);  /* true if there is a shell */
+    lua_pushnumber(L, stmt);
     return 1;
   }
 }
