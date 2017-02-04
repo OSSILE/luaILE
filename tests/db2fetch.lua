@@ -14,12 +14,13 @@ do
   local execres = db2.executeStatement(stmt, "SELECT * FROM #LALLAN/MYFILE") 
   print(execres)
   
+  local retval
   while db2.fetch(stmt) == 0.0 do
-    local retval = db2.getColumn(stmt, 1, 10)
+    retval = db2.getColumn(stmt, 1, 1, 10)
+    print(retval)
+    retval = db2.getColumn(stmt, 2, 2, 10)
     print(retval)
   end
-  
-  db2.printError(env, hdl, stmt) --row not found???
   
   local stmt = db2.closeStatement(stmt)
   
