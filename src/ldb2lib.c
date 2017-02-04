@@ -140,11 +140,12 @@ static int db2_getColumn(lua_State *L) {
   SQLHSTMT stmt = lua_tointeger(L, 1);
   SQLSMALLINT col = lua_tointeger(L, 2);
   SQLINTEGER len = lua_tointeger(L, 3);
-  rlength = len-4;
+  rlength = 10;
   
   SQLCHAR * fieldRet;
   
   SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
+  fieldRet[len] = '\0';
   
   lua_pushstring(L, fieldRet);
   
