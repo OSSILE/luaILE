@@ -19,7 +19,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.allocEnv()` - Allocate an environment
+### `db2.allocEnv()` - Allocate an environment
 
 ##### Notes
 
@@ -36,7 +36,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.allocConnection()` - Allocate a connection
+### `db2.allocConnection()` - Allocate a connection
 
 ##### Parameters
 
@@ -61,7 +61,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.Connect(hdl, db)` - Connect to a database
+### `db2.Connect(hdl, db)` - Connect to a database
 
 ##### Parameters
 
@@ -88,7 +88,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.allocateStatement(hdl)` - Allocate a statement handle to run and fetch an SQL statement
+### `db2.allocateStatement(hdl)` - Allocate a statement handle to run and fetch an SQL statement
 
 ##### Parameters
 
@@ -119,7 +119,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.executeStatement(hdl, statement)` - Run a valid SQL statement
+### `db2.executeStatement(hdl, statement)` - Run a valid SQL statement
 
 ##### Parameters
 
@@ -154,7 +154,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.fetch(stmt)` - Fetch the first or next row from a table
+### `db2.fetch(stmt)` - Fetch the first or next row from a table
 
 ##### Parameters
 
@@ -185,7 +185,9 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeEnv(env)
 ```
 
-#### `db2.getColumn(stmt, column, type, length)`
+***
+
+### `db2.getColumn(stmt, column, type, length)`
 
 ##### Parameters
 
