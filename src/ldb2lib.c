@@ -125,7 +125,7 @@ static int db2_executeDirect(lua_State *L) {
 }
 
 static int db2_fetch(lua_State *L) {
-  SQLHSTMT stmt = lua_tointeger(L, 1);
+  SQLHSTMT stmt = lua_tointeger(L, 1); 
   
   SQLRETURN res = SQLFetch(stmt);
   lua_pushnumber(L, res);
@@ -216,6 +216,15 @@ static const luaL_Reg db2lib[] = {
   {"SQLNUMERIC", NULL},
   {"SQLSMALLINT", NULL},
   {"SQLDECIMAL", NULL},
+  
+  {"SQL_SUCCESS", NULL},
+  {"SQL_SUCCESS_WITH_INFO", NULL},
+  {"SQL_NO_DATA_FOUND", NULL},
+  {"SQL_NEED_DATA", NULL},
+  {"SQL_NO_DATA", NULL},
+  {"SQL_ERROR", NULL},
+  {"SQL_INVALID_HANDLE", NULL},
+  {"SQL_STILL_EXECUTING", NULL},
   {NULL, NULL}
 };
 
@@ -244,6 +253,30 @@ LUAMOD_API int luaopen_db2 (lua_State *L) {
   
   lua_pushnumber(L, 4);
   lua_setfield(L, -2, "SQLDECIMAL");
+  
+  lua_pushnumber(L, 0);
+  lua_setfield(L, -2, "SQL_SUCCESS");
+  
+  lua_pushnumber(L, 1);
+  lua_setfield(L, -2, "SQL_SUCCESS_WITH_INFO");
+  
+  lua_pushnumber(L, 100);
+  lua_setfield(L, -2, "SQL_NO_DATA_FOUND");
+  
+  lua_pushnumber(L, 99);
+  lua_setfield(L, -2, "SQL_NEED_DATA");
+  
+  lua_pushnumber(L, 100);
+  lua_setfield(L, -2, "SQL_NO_DATA");
+  
+  lua_pushnumber(L, -1);
+  lua_setfield(L, -2, "SQL_ERROR");
+  
+  lua_pushnumber(L, -2);
+  lua_setfield(L, -2, "SQL_INVALID_HANDLE");
+  
+  lua_pushnumber(L, 2);
+  lua_setfield(L, -2, "SQL_STILL_EXECUTING");
   
   return 1;
 }
