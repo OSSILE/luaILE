@@ -85,3 +85,65 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeConnection(hdl)
   db2.freeEnv(env)
 ```
+
+#### `db2.allocateStatement(hdl)` - Allocate a statement handle to run and fetch an SQL statement
+
+##### Parameters
+
+1. Connection handle
+
+##### Notes
+
+* Returns statement handle as `number`.
+* Always keep the handle stored so you are able to correctly free/close the statement at the end of the script.
+
+```lua
+  local env = db2.allocEnv()
+  print(env)
+  
+  local hdl = db2.allocConnection(env)
+  print(hdl);
+  
+  db2.Connect(hdl, "*LOCAL")
+  
+  local stmt = db2.allocStatement(hdl)
+  print(stmt)
+  
+  db2.closeStatement(stmt)
+  db2.Disconnect(hdl)
+  db2.freeConnection(hdl)
+  db2.freeEnv(env)
+```
+
+#### `db2.executeStatement(hdl, statement)` - Run a valid SQL statement
+
+##### Parameters
+
+1. Statement handle
+2. SQL statement (`string`)
+
+##### Notes
+
+* Returns SQLRETURN value as `number`.
+* If a SELECT statement is used, you are also able to use `db2.fetch(stmt)`.
+
+```lua
+  local env = db2.allocEnv()
+  print(env)
+  
+  local hdl = db2.allocConnection(env)
+  print(hdl);
+  
+  db2.Connect(hdl, "*LOCAL")
+  
+  local stmt = db2.allocStatement(hdl)
+  print(stmt)
+  
+  local execres = db2.executeStatement(stmt, "INSERT INTO MYFILE VALUES('Goodbye', 1234.57)") 
+  print(execres)
+  
+  db2.closeStatement(stmt)
+  db2.Disconnect(hdl)
+  db2.freeConnection(hdl)
+  db2.freeEnv(env)
+```
