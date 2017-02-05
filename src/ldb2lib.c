@@ -141,7 +141,6 @@ static int db2_getColumn(lua_State *L) {
   SQLINTEGER len = lua_tointeger(L, 4);
   
   SQLCHAR * fieldRet;
-  SQLSMALLINT * fieldSmallInt;
   
   switch(type) {
     case 1: //char
@@ -208,6 +207,7 @@ static const luaL_Reg db2lib[] = {
   
   {"NULL", NULL},
   {"SQLCHAR", NULL},
+  {"SQLVARCHAR", NULL},
   {"SQLNUMERIC", NULL},
   {"SQLSMALLINT", NULL},
   {NULL, NULL}
@@ -223,10 +223,16 @@ LUAMOD_API int luaopen_db2 (lua_State *L) {
   
   lua_pushstring(L, null);
   lua_setfield(L, -2, "NULL");
+  
   lua_pushnumber(L, 1);
   lua_setfield(L, -2, "SQLCHAR");
+  
+  lua_pushnumber(L, 1);
+  lua_setfield(L, -2, "SQLVARCHAR");
+  
   lua_pushnumber(L, 2);
   lua_setfield(L, -2, "SQLNUMERIC");
+  
   lua_pushnumber(L, 3);
   lua_setfield(L, -2, "SQLSMALLINT");
   
