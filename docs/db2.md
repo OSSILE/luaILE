@@ -61,7 +61,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `db2.Connect(db)` - Connect to a database
+#### `db2.Connect(hdl, db)` - Connect to a database
 
 ##### Parameters
 
