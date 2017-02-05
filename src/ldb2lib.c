@@ -25,7 +25,7 @@ static int db2_allocEnv(lua_State *L) {
   int sqltrue = SQL_TRUE;
 
   if (SQLAllocEnv(&env) == SQL_ERROR) {
-    lua_pushnumber(L, 0); //0 = ERROR
+    lua_pushnumber(L, SQL_ERROR); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
     
   } else {
@@ -48,7 +48,7 @@ static int db2_allocConnect(lua_State *L) {
   SQLHDBC hdl = 0;
 
   if (SQLAllocConnect(env, &hdl) != SQL_SUCCESS) {
-    lua_pushnumber(L, 0); //0 = ERROR
+    lua_pushnumber(L, SQL_ERROR); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
 
@@ -71,7 +71,7 @@ static int db2_Connect(lua_State *L) {
   SQLRETURN res = SQLConnect(hdl, database, SQL_NTS, 0, SQL_NTS, 0, SQL_NTS);
 
   if (res != SQL_SUCCESS) {
-    lua_pushnumber(L, 0); //0 = ERROR
+    lua_pushnumber(L, res);
     return luaL_execresult(L, SQL_ERROR);
   } else {
     SQLINTEGER sqltrue = SQL_TRUE;
@@ -80,7 +80,7 @@ static int db2_Connect(lua_State *L) {
     SQLSetConnectAttr(hdl, SQL_ATTR_DBC_SYS_NAMING, &sqltrue, 0);
     SQLSetConnectAttr(hdl, SQL_ATTR_COMMIT, &nocmt, 0);
     
-    lua_pushnumber(L, 1);
+    lua_pushnumber(L, res);
     return 1;
   }
 }
@@ -94,10 +94,10 @@ static int db2_Disconnect(lua_State *L) {
 
 static int db2_allocStatement(lua_State *L) {
   SQLHDBC hdl = lua_tointeger(L, 1);
-  SQLHSTMT stmt = 0;
+  SQLHSTMT stmt = 0; 
 
   if (SQLAllocStmt(hdl, &stmt) != SQL_SUCCESS) {
-    lua_pushnumber(L, 0); //0 = ERROR
+    lua_pushnumber(L, SQL_ERROR); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
   } else {
     lua_pushnumber(L, stmt);
@@ -190,11 +190,6 @@ static const luaL_Reg db2lib[] = {
   {"printError",       db2_printError},
   
   {"NULL", NULL},
-  {"SQLCHAR", NULL},
-  {"SQLVARCHAR", NULL},
-  {"SQLNUMERIC", NULL},
-  {"SQLSMALLINT", NULL},
-  {"SQLDECIMAL", NULL},
   
   {"SQL_SUCCESS", NULL},
   {"SQL_SUCCESS_WITH_INFO", NULL},
@@ -217,21 +212,6 @@ LUAMOD_API int luaopen_db2 (lua_State *L) {
   
   lua_pushstring(L, null);
   lua_setfield(L, -2, "NULL");
-  
-  lua_pushnumber(L, 1);
-  lua_setfield(L, -2, "SQLCHAR");
-  
-  lua_pushnumber(L, 1);
-  lua_setfield(L, -2, "SQLVARCHAR");
-  
-  lua_pushnumber(L, 2);
-  lua_setfield(L, -2, "SQLNUMERIC");
-  
-  lua_pushnumber(L, 3);
-  lua_setfield(L, -2, "SQLSMALLINT");
-  
-  lua_pushnumber(L, 4);
-  lua_setfield(L, -2, "SQLDECIMAL");
   
   lua_pushnumber(L, 0);
   lua_setfield(L, -2, "SQL_SUCCESS");

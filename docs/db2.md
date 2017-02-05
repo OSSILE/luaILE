@@ -17,6 +17,19 @@ All the DB2 functions are within the `db2` namespace.
 * `getColumn` - Grab the value of a specific column.
 * `printError` - If the statement has crashed internally, use `db2.printError` to see more information.
 
+### Constant list
+
+* `SQLRETURN`s:
+  * `db2.SQL_SUCCESS`
+  * `db2.SQL_SUCCESS_WITH_INFO`
+  * `db2.SQL_NO_DATA_FOUND`
+  * `db2.SQL_NEED_DATA`
+  * `db2.SQL_NO_DATA`
+  * `db2.SQL_ERROR`
+  * `db2.SQL_INVALID_HANDLE`
+  * `SQL_STILL_EXECUTING`
+* `db2.NULL`
+
 ***
 
 ### `db2.allocEnv()` - Allocate an environment
@@ -24,8 +37,8 @@ All the DB2 functions are within the `db2` namespace.
 ##### Notes
 
 * Allocate an environment to connect and run statements in.
-* Returns environment handle as `number`.
 * Always keep the handle stored so you are able to correctly free the environment at the end of the script.
+* Returns environment handle as `number`. Returns `db2.SQL_ERROR` if there was an error.
 
 ```lua
   local env = db2.allocEnv()
@@ -45,7 +58,7 @@ All the DB2 functions are within the `db2` namespace.
 ##### Notes
 
 * Allocate a connection to run statements in.
-* Returns connection handle as `number`.
+* Returns connection handle as `number`. Returns `db2.SQL_ERROR` if there was an error.
 * Always keep the handle stored so you are able to correctly disconnect at the end of the script.
 
 ```lua
@@ -71,6 +84,7 @@ All the DB2 functions are within the `db2` namespace.
 ##### Notes
 
 * Only supports local databases currently. Support for external databases/system with username and password are coming, eventually.
+* Returns SQLRETURN value as `number`.
 
 ```lua
   local env = db2.allocEnv()
@@ -96,7 +110,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ##### Notes
 
-* Returns statement handle as `number`.
+* Returns statement handle as `number`. Returns `db2.SQL_ERROR` if there was an error.
 * Always keep the handle stored so you are able to correctly free/close the statement at the end of the script.
 
 ```lua
@@ -162,7 +176,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ##### Notes
 
-* Returns SQLRETURN value as `number`. (`0` is successful)
+* Returns SQLRETURN value as `number`.
 * To get the columns out of a fetch, use `db2.getColumn(stmt, col, type, len)`.
 
 ```lua
