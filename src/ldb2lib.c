@@ -200,6 +200,7 @@ static const luaL_Reg db2lib[] = {
   {"getColumn",        db2_getColumn},
   {"printError",       db2_printError},
   
+  {"NULL", NULL},
   {"SQLCHAR", NULL},
   {"SQLNUMERIC", NULL},
   {NULL, NULL}
@@ -210,8 +211,11 @@ static const luaL_Reg db2lib[] = {
 
 
 LUAMOD_API int luaopen_db2 (lua_State *L) {
+  char null[1] = "~";
   luaL_newlib(L, db2lib);
   
+  lua_pushstring(L, null);
+  lua_setfield(L, -2, "NULL");
   lua_pushnumber(L, 1);
   lua_setfield(L, -2, "SQLCHAR");
   lua_pushnumber(L, 2);
