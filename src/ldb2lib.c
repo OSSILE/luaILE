@@ -159,6 +159,11 @@ static int db2_getColumn(lua_State *L) {
       SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, 4, &rlength);
       lua_pushstring(L, fieldRet);
       break;
+      
+    case 4: //decimal
+      SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
+      lua_pushstring(L, fieldRet);
+      break;
   }
   
   return 1;
@@ -210,6 +215,7 @@ static const luaL_Reg db2lib[] = {
   {"SQLVARCHAR", NULL},
   {"SQLNUMERIC", NULL},
   {"SQLSMALLINT", NULL},
+  {"SQLDECIMAL", NULL},
   {NULL, NULL}
 };
 
@@ -235,6 +241,9 @@ LUAMOD_API int luaopen_db2 (lua_State *L) {
   
   lua_pushnumber(L, 3);
   lua_setfield(L, -2, "SQLSMALLINT");
+  
+  lua_pushnumber(L, 4);
+  lua_setfield(L, -2, "SQLDECIMAL");
   
   return 1;
 }
