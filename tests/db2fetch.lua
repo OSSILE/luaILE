@@ -14,11 +14,17 @@ do
   local execres = db2.executeStatement(stmt, "SELECT * FROM #LALLAN/MYFILE") 
   print(execres)
   
+  local sqlchar = db2.SQLCHAR
+  local sqlnum = db2.SQLNUMERIC
+  
+  print(sqlchar)
+  print(sqlnum)
+  
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 1, 1, 10)
+    retval = db2.getColumn(stmt, 2, db2.SQLCHAR, 10)
     print(retval)
-    retval = db2.getColumn(stmt, 2, 2, 10)
+    retval = db2.getColumn(stmt, 1, db2.SQLNUMERIC, 10)
     print(retval)
   end
   

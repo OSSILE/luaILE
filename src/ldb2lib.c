@@ -47,8 +47,6 @@ static int db2_allocConnect(lua_State *L) {
   SQLHENV env = lua_tointeger(L, 1);
   SQLHDBC hdl = 0;
 
-  int sqltrue = SQL_AUTOCOMMIT_ON;
-
   if (SQLAllocConnect(env, &hdl) != SQL_SUCCESS) {
     lua_pushnumber(L, 0); //0 = ERROR
     return luaL_execresult(L, SQL_ERROR);
@@ -155,7 +153,6 @@ static int db2_getColumn(lua_State *L) {
       SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
       fieldRet[len] = '\0';
       lua_pushstring(L, fieldRet);
-      //lua_pushnumber(L, lua_stringtonumber(L, fieldRet));
       break;
   }
   
@@ -202,6 +199,9 @@ static const luaL_Reg db2lib[] = {
   {"fetch",            db2_fetch},
   {"getColumn",        db2_getColumn},
   {"printError",       db2_printError},
+  
+  {"SQLCHAR", NULL},
+  {"SQLNUMERIC", NULL},
   {NULL, NULL}
 };
 
@@ -211,6 +211,12 @@ static const luaL_Reg db2lib[] = {
 
 LUAMOD_API int luaopen_db2 (lua_State *L) {
   luaL_newlib(L, db2lib);
+  
+  lua_pushnumber(L, 1);
+  lua_setfield(L, -2, "SQLCHAR");
+  lua_pushnumber(L, 2);
+  lua_setfield(L, -2, "SQLNUMERIC");
+  
   return 1;
 }
 
