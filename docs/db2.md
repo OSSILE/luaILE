@@ -184,3 +184,43 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeConnection(hdl)
   db2.freeEnv(env)
 ```
+
+#### `db2.getColumn(stmt, column, type, length)`
+
+##### Parameters
+
+1. Statement handle
+2. Column number (starting from 1)
+3. Value type
+  * `db2.SQLCHAR` - Character
+  * `db2.SQLVARCHAR` - Variable character
+  * `db2.SQLNUMERIC` - Numeric/zoned field
+  * `db2.SQLSMALLINT` - Small/short integer
+  * `db2.SQLDECIMAL` - Decimal
+4. Length of field. Ignored for `SQLSMALLINT`.
+
+##### Notes
+
+* Returns `string` for all types.
+
+```lua
+  local env = db2.allocEnv()
+  local hdl = db2.allocConnection(env)
+  db2.Connect(hdl, "*LOCAL")
+  local stmt = db2.allocStatement(hdl)
+  
+  db2.executeStatement(stmt, "SELECT DEPTNO, DEPTNAME, MGRNO FROM sample/DEPARTMENT")
+  
+  local retval
+  while db2.fetch(stmt) == 0.0 do
+    retval = db2.getColumn(stmt, 3, db2.SQLCHAR, 6)
+    if retval ~= db2.NULL then
+      print(retval)
+    end
+  end
+  
+  db2.closeStatement(stmt)
+  db2.Disconnect(hdl)
+  db2.freeConnection(hdl)
+  db2.freeEnv(env)
+```
