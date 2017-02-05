@@ -86,6 +86,8 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeEnv(env)
 ```
 
+***
+
 #### `db2.allocateStatement(hdl)` - Allocate a statement handle to run and fetch an SQL statement
 
 ##### Parameters
@@ -115,6 +117,8 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeEnv(env)
 ```
 
+***
+
 #### `db2.executeStatement(hdl, statement)` - Run a valid SQL statement
 
 ##### Parameters
@@ -141,6 +145,39 @@ All the DB2 functions are within the `db2` namespace.
   
   local execres = db2.executeStatement(stmt, "INSERT INTO MYFILE VALUES('Goodbye', 1234.57)") 
   print(execres)
+  
+  db2.closeStatement(stmt)
+  db2.Disconnect(hdl)
+  db2.freeConnection(hdl)
+  db2.freeEnv(env)
+```
+
+***
+
+#### `db2.fetch(stmt)` - Fetch the first or next row from a table
+
+##### Parameters
+
+1. Statement handle
+
+##### Notes
+
+* Returns SQLRETURN value as `number`. (`0` is successful)
+* To get the columns out of a fetch, use `db2.getColumn(stmt, col, type, len)`.
+
+```lua
+  local env = db2.allocEnv()
+  local hdl = db2.allocConnection(env)
+  db2.Connect(hdl, "*LOCAL")
+  local stmt = db2.allocStatement(hdl)
+  
+  local execres = db2.executeStatement(stmt, "SELECT * FROM #LALLAN/MYFILE") 
+  
+  local retval
+  while db2.fetch(stmt) == 0.0 do
+    retval = db2.getColumn(stmt, 2, db2.SQLCHAR, 10)
+    print(retval)
+  end
   
   db2.closeStatement(stmt)
   db2.Disconnect(hdl)
