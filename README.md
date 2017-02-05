@@ -1,11 +1,11 @@
 # luaILE
 Lua 5.3.3 for IBM i.
 
-On-going development is happening to make sure all the test cases for 5.3.3 [found here](https://www.lua.org/tests/) pass without any issues.
+This port will have a functional Lua implementation (mirror of the official repo) as well as extra modules to make use of the OS.
 
-### Todo
+### Work in progress modules
 
-* DB2 API
+* DB2 API: [read documentation here](https://github.com/OSSILE/luaILE/blob/master/docs/db2.md).
 
 ## Build and try
 
