@@ -36,12 +36,11 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-#### `allocConnection` - Allocate a connection
+#### `db2.allocConnection()` - Allocate a connection
 
 ##### Parameters
 
 1. Environment handle
-2. Database name (`string`)
 
 ##### Notes
 
@@ -56,6 +55,33 @@ All the DB2 functions are within the `db2` namespace.
   local hdl = db2.allocConnection(env)
   print(hdl);
   
+  db2.freeConnection(hdl)
+  db2.freeEnv(env)
+```
+
+***
+
+#### `db2.Connect(db)` - Connect to a database
+
+##### Parameters
+
+1. Connection handle
+2. Database name (`string`)
+
+##### Notes
+
+* Only supports local databases currently. Support for external databases/system with username and password are coming, eventually.
+
+```lua
+  local env = db2.allocEnv()
+  print(env)
+  
+  local hdl = db2.allocConnection(env)
+  print(hdl);
+  
+  db2.Connect(hdl, "*LOCAL")
+  
+  db2.Disconnect(hdl)
   db2.freeConnection(hdl)
   db2.freeEnv(env)
 ```
