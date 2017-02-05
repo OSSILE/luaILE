@@ -22,9 +22,9 @@ do
   
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 2, db2.SQLCHAR, 10)
+    retval = db2.getColumn(stmt, 2, 10)
     print(retval)
-    retval = db2.getColumn(stmt, 1, db2.SQLNUMERIC, 10)
+    retval = db2.getColumn(stmt, 1, 10)
     print(retval)
   end
   

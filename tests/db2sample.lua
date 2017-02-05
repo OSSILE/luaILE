@@ -16,11 +16,11 @@ do
   
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 1, db2.SQLCHAR, 3)
+    retval = db2.getColumn(stmt, 1, 3)
     print(retval)
-    retval = db2.getColumn(stmt, 2, db2.SQLCHAR, 36)
+    retval = db2.getColumn(stmt, 2, 36)
     print(retval)
-    retval = db2.getColumn(stmt, 3, db2.SQLCHAR, 6)
+    retval = db2.getColumn(stmt, 3, 6)
     if retval ~= db2.NULL then
       print(retval)
     end

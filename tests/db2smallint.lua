@@ -16,7 +16,7 @@ do
   
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 1, db2.SQLSMALLINT, 4)
+    retval = db2.getColumn(stmt, 1, 4)
     print(retval)
   end
   

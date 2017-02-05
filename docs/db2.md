@@ -175,7 +175,7 @@ All the DB2 functions are within the `db2` namespace.
   
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 2, db2.SQLCHAR, 10)
+    retval = db2.getColumn(stmt, 2, 10)
     print(retval)
   end
   
@@ -193,13 +193,7 @@ All the DB2 functions are within the `db2` namespace.
 
 1. Statement handle
 2. Column number (starting from 1)
-3. Value type
-  * `db2.SQLCHAR` - Character
-  * `db2.SQLVARCHAR` - Variable character
-  * `db2.SQLNUMERIC` - Numeric/zoned field
-  * `db2.SQLSMALLINT` - Small/short integer
-  * `db2.SQLDECIMAL` - Decimal
-4. Length of field. Ignored for `SQLSMALLINT`.
+3. Length of field.
 
 ##### Notes
 
@@ -215,7 +209,8 @@ All the DB2 functions are within the `db2` namespace.
   
   local retval
   while db2.fetch(stmt) == 0.0 do
-    retval = db2.getColumn(stmt, 3, db2.SQLCHAR, 6)
+    --COLUMN 3 = MGRNO
+    retval = db2.getColumn(stmt, 3, 6)
     if retval ~= db2.NULL then
       print(retval)
     end

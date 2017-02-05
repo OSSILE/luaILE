@@ -137,34 +137,13 @@ static int db2_getColumn(lua_State *L) {
   
   SQLHSTMT stmt = lua_tointeger(L, 1);
   SQLSMALLINT col = lua_tointeger(L, 2);
-  SQLSMALLINT type = lua_tointeger(L, 3);
-  SQLINTEGER len = lua_tointeger(L, 4);
+  SQLINTEGER len = lua_tointeger(L, 3);
   
   SQLCHAR * fieldRet;
   
-  switch(type) {
-    case 1: //char
-      SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
-      fieldRet[len] = '\0';
-      lua_pushstring(L, fieldRet);
-      break;
-      
-    case 2: //numeric
-      SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
-      fieldRet[len] = '\0';
-      lua_pushstring(L, fieldRet);
-      break;
-      
-    case 3: //short int
-      SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, 4, &rlength);
-      lua_pushstring(L, fieldRet);
-      break;
-      
-    case 4: //decimal
-      SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
-      lua_pushstring(L, fieldRet);
-      break;
-  }
+  SQLGetCol(stmt, col, SQL_CHAR, (SQLPOINTER) fieldRet, len, &rlength);
+  fieldRet[len] = '\0';
+  lua_pushstring(L, fieldRet);
   
   return 1;
 }
