@@ -34,6 +34,8 @@ All the DB2 functions are within the `db2` namespace.
   db2.freeEnv(env)
 ```
 
+***
+
 #### `allocConnection` - Allocate a connection
 
 ##### Parameters
@@ -47,7 +49,7 @@ All the DB2 functions are within the `db2` namespace.
 * Returns connection handle as `number`.
 * Always keep the handle stored so you are able to correctly disconnect at the end of the script.
 
-```
+```lua
   local env = db2.allocEnv()
   print(env)
   
