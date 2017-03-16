@@ -201,7 +201,7 @@ All the DB2 functions are within the `db2` namespace.
 
 ***
 
-### `db2.getColumn(stmt, column, type, length)`
+### `db2.getColumn(stmt, column, length)`
 
 ##### Parameters
 
